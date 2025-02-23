@@ -17,42 +17,21 @@
 
 Результат роботи: посилання на GitHub
 
-
-
-
-
-Завдання 1
-
-Описати структуру Student (прізвище, група, успішність (масив із 5 int)). Створити масив студентів і написати програму, що дозволяє:
-
-Динамічно змінювати розмір масиву;
-Виводити список відмінників (>75% відмінних оцінок);
-Виводити список двієчників (>50% оцінок 2 і 3).
-
-
-
-Завдання 2
-
-Описати структуру Man (Прізвище, Ім'я, Вік, Дата народження). Створити масив, передбачити:
-
-Виведення інформації із сортуванням за прізвищем або ім'ям;
-Виведення списку іменинників місяця із зазначенням дати народження;
-Зміну розмірів масиву під час додавання і видалення записів;
-Пошук за прізвищем та ім'ям;
-Редагування запису.
-
 */
 
 #include <iostream>
 #include <vector>
 #include <string>
 #include <iomanip>
+#include <algorithm>
 
 using namespace std;
 
 
 
 #pragma region Structures
+
+
 
 // EXERCISE 1
 
@@ -64,7 +43,17 @@ struct Student {
 };
 
 
+// EXERCISE 2
 
+
+struct Man {
+    string surname;
+    string name;
+    int age;
+    int birthDay;
+    int birthMonth;
+    int birthYear;
+};
 
 
 
@@ -75,6 +64,11 @@ struct Student {
 
 #pragma region Functions prototypes
 
+
+void exercise(int numberOfExercise);
+
+
+// EXERCISE 1
 
 void addStudent(vector<Student>& students);
 
@@ -100,7 +94,36 @@ bool isFailing(const Student& student);
 void removeStudent(vector<Student>& students);
 
 
+// EXEFCISE 2
+
+void addPerson(Man*& people, int& size);
+
+
+void deletePerson(Man*& people, int& size);
+
+
+void editPerson(Man* people, int size);
+
+
+void searchPerson(Man* people, int size);
+
+
+void printPeople(Man* people, int size);
+
+
+void printSorted(Man* people, int size, bool bySurname);
+
+
+void printBirthdayMonth(Man* people, int size);
+
+
+
+
+
 #pragma endregion
+
+
+
 
 int main()
 {
@@ -108,8 +131,23 @@ int main()
     srand(time(0));
 
 
+/*
+
+Завдання 1
+
+Описати структуру Student (прізвище, група, успішність (масив із 5 int)). Створити масив студентів і написати програму, що дозволяє:
+
+Динамічно змінювати розмір масиву;
+Виводити список відмінників (>75% відмінних оцінок);
+Виводити список двієчників (>50% оцінок 2 і 3).
+
+*/
+
+
 #pragma region Exercise 1
 
+
+    exercise(1);
 
     vector<Student> students = {
         {"Петренко", "ІП-11", {12, 11, 10, 12, 11}},
@@ -183,12 +221,113 @@ int main()
 #pragma endregion
 
 
+/*
+
+Завдання 2
+
+Описати структуру Man (Прізвище, Ім'я, Вік, Дата народження). Створити масив, передбачити:
+
+Виведення інформації із сортуванням за прізвищем або ім'ям;
+Виведення списку іменинників місяця із зазначенням дати народження;
+Зміну розмірів масиву під час додавання і видалення записів;
+Пошук за прізвищем та ім'ям;
+Редагування запису.
+
+*/
+
+#pragma region Exercise 2
+
+
+    exercise(2);
+
+
+    int size = 3;
+    int choice2;
+
+    Man* people = new Man[size];
+
+    people[0] = { "Іваненко", "Іван", 30, 15, 8, 1994 };
+    people[1] = { "Петренко", "Петро", 25, 22, 3, 1999 };
+    people[2] = { "Сидоренко", "Сидір", 40, 5, 12, 1984 };
+
+    do {
+        while (true) {
+            cout << "\t\t\t\033[042mМеню:\033[0m\n";
+            cout << "\033[033m1. Додати людину\n";
+            cout << "2. Видалити людину\n";
+            cout << "3. Редагувати дані людини\n";
+            cout << "4. Вивести список людей\n";
+            cout << "5. Відсортувати список\n";
+            cout << "6. Пошук іменинників за місяцем\n";
+            cout << "0. Вихід\033[0m\n";
+            cout << "Ваш вибір: ";
+            cin >> choice2;
+            cin.ignore();  
+
+            if (cin.fail()) {
+                cout << "\033[031m Помилка! Будь ласка, введіть число.\033[0m\n";
+                cin.clear();  
+                cin.ignore(1000, '\n');  
+                continue;
+            }
+
+            if (choice2 < 0 || choice2 > 6) {
+                cout << "\033[031m Помилка! Будь ласка, введіть число в діапазоні від 0 до 6.\033[0m\n";
+                continue;
+            }
+
+            break;  
+        }
+
+        switch (choice2) {
+        case 1:
+            addPerson(people, size); break;
+        case 2:
+            deletePerson(people, size); break;
+        case 3:
+            editPerson(people, size); break;
+        case 4:
+            printPeople(people, size); break;
+        case 5: {
+            bool bySurname;
+            cout << "Сортувати за прізвищем? (1 - так, 0 - ні): ";
+            cin >> bySurname;
+            printSorted(people, size, bySurname);
+            break;
+        }
+        case 6:
+            printBirthdayMonth(people, size); break;
+        case 0:
+            cout << "Вихід...\n";
+            break;
+        default:
+            cout << "Неправильний вибір, спробуйте ще раз.\n";
+        }
+
+    } while (choice2 != 0);
+
+    delete[] people;  
+
+
+#pragma endregion
+
+
     return 0;
 }
 
+
+
 #pragma region Functions
 
+
+void exercise(int numberOfExercise)
+{
+    cout << endl << endl << "\t\t\t\t\033[032mExercise " << numberOfExercise << "\033[0m" << endl << endl;
+}
+
+
 // EXERCISE 1
+
 
 void addStudent(vector<Student>& students) {
     Student student;
@@ -396,5 +535,179 @@ void removeStudent(vector<Student>& students) {
     }
     cout << "Студента не знайдено.\n";
 }
+
+
+// EXERCISE 2
+
+void addPerson(Man*& people, int& size) {
+    Man* newPeople = new Man[size + 1];
+    for (int i = 0; i < size; i++) {
+        newPeople[i] = people[i];
+    }
+
+    cout << "\nДодавання людини:" << endl;
+    cout << "Прізвище: ";
+    cin >> newPeople[size].surname;
+    cout << "Ім'я: ";
+    cin >> newPeople[size].name;
+    cout << "Вік: ";
+    cin >> newPeople[size].age;
+    cout << "День народження: ";
+    cin >> newPeople[size].birthDay;
+    cout << "Місяць народження: ";
+    cin >> newPeople[size].birthMonth;
+    cout << "Рік народження: ";
+    cin >> newPeople[size].birthYear;
+
+    delete[] people;
+    people = newPeople;
+    size++;
+    cout << "\033[042mЛюдину додано!\033[0m" << endl;
+}
+
+
+void deletePerson(Man*& people, int& size) {
+    if (size == 0) {
+        cout << "\n\033[041mСписок порожній!\033[0m" << endl;
+        return;
+    }
+
+    string surname;
+    cout << "\nВведіть прізвище для видалення: ";
+    cin >> surname;
+
+    int index = -1;
+    for (int i = 0; i < size; i++) {
+        if (people[i].surname == surname) {
+            index = i;
+            break;
+        }
+    }
+
+    if (index == -1) {
+        cout << "\033[041mЛюдину не знайдено!\033[0m" << endl;
+        return;
+    }
+
+    Man* newPeople = new Man[size - 1];
+    for (int i = 0, j = 0; i < size; i++) {
+        if (i != index) {
+            newPeople[j++] = people[i];
+        }
+    }
+
+    delete[] people;
+    people = newPeople;
+    size--;
+    cout << "\033[042mЛюдину видалено!\033[0m" << endl;
+}
+
+
+void editPerson(Man* people, int size) {
+    if (size == 0) {
+        cout << "\n\033[041mСписок порожній!\033[0m" << endl;
+        return;
+    }
+
+    string surname;
+    cout << "\nВведіть прізвище для редагування: ";
+    cin >> surname;
+
+    for (int i = 0; i < size; i++) {
+        if (people[i].surname == surname) {
+            cout << "Нове ім'я: ";
+            cin >> people[i].name;
+            cout << "Новий вік: ";
+            cin >> people[i].age;
+            cout << "Новий день народження: ";
+            cin >> people[i].birthDay;
+            cout << "Новий місяць народження: ";
+            cin >> people[i].birthMonth;
+            cout << "Новий рік народження: ";
+            cin >> people[i].birthYear;
+            cout << "\033[042mДані оновлено!\033[0m" << endl;
+            return;
+        }
+    }
+    cout << "\033[041mЛюдину не знайдено!\033[0m" << endl;
+}
+
+
+void searchPerson(Man* people, int size) {
+    if (size == 0) {
+        cout << "\n\033[041mСписок порожній!\033[0m" << endl;
+        return;
+    }
+
+    string surname;
+    cout << "\nВведіть прізвище для пошуку: ";
+    cin >> surname;
+
+    for (int i = 0; i < size; i++) {
+        if (people[i].surname == surname) {
+            cout << "\033[042mЗнайдено: \033[0m" << people[i].surname << " " << people[i].name
+                << ", Вік: " << people[i].age << " років, Дата нар.: "
+                << people[i].birthDay << "." << people[i].birthMonth << "." << people[i].birthYear << endl;
+            return;
+        }
+    }
+    cout << "\033[041mЛюдину не знайдено!\033[0m" << endl;
+}
+
+
+void printPeople(Man* people, int size) {
+    if (size == 0) {
+        cout << "\n\033[041mСписок порожній!\033[0m" << endl;
+        return;
+    }
+
+    cout << "\nСписок людей:" << endl;
+    for (int i = 0; i < size; i++) {
+        cout << people[i].surname << " " << people[i].name << ", Вік: "
+            << people[i].age << " років, Дата нар.: " << people[i].birthDay << "."
+            << people[i].birthMonth << "." << people[i].birthYear << endl;
+    }
+}
+
+
+void printSorted(Man* people, int size, bool bySurname) {
+    if (size == 0) {
+        cout << "\n\033[041mСписок порожній!\033[0m" << endl;
+        return;
+    }
+
+    sort(people, people + size, [bySurname](const Man& a, const Man& b) {
+        return bySurname ? a.surname < b.surname : a.name < b.name;
+        });
+
+    printPeople(people, size);
+}
+
+
+void printBirthdayMonth(Man* people, int size) {
+    if (size == 0) {
+        cout << "\n\033[041mСписок порожній!\033[0m" << endl;
+        return;
+    }
+
+    int month;
+    cout << "\nВведіть номер місяця для пошуку іменинників: ";
+    cin >> month;
+
+    bool found = false;
+    for (int i = 0; i < size; i++) {
+        if (people[i].birthMonth == month) {
+            cout << people[i].surname << " " << people[i].name << " - "
+                << people[i].birthDay << "." << people[i].birthMonth << "." << people[i].birthYear << endl;
+            found = true;
+        }
+    }
+
+    if (!found) {
+        cout << "\033[041mНемає іменинників у цьому місяці!\033[0m" << endl;
+    }
+}
+
+
 
 #pragma endregion
